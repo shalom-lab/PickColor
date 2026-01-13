@@ -16,7 +16,60 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          fetch-depth: 0  # 获取所有历史记录以便检查 tag
+      
+      - name: Validate tag exists
+        id: validate-tag
+        run: |
+          TAG="${{ github.event.inputs.tag }}"
+          echo "Checking if tag $TAG exists..."
+          
+          # 获取所有 tags
+          git fetch --tags
+          
+          # 检查 tag 是否存在
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG exists ✓"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Error: Tag '$TAG' does not exist!"
+            echo "Available tags:"
+            git tag -l | head -10
+            echo "exists=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+      
+      - name: Checkout tag
+        uses: actions/checkout@v3
+        with:
           ref: ${{ github.event.inputs.tag }}
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.inputs.tag }}"
+          VERSION=${TAG#v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION from tag: $TAG"
+      
+      - name: Update manifest versions
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # 更新 Chrome manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.chrome.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.chrome.json', JSON.stringify(manifest, null, 2));
+          "
+          # 更新 Firefox manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.firefox.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.firefox.json', JSON.stringify(manifest, null, 2));
+          "
+          echo "Updated manifests to version $VERSION"
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -48,7 +101,60 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          fetch-depth: 0  # 获取所有历史记录以便检查 tag
+      
+      - name: Validate tag exists
+        id: validate-tag
+        run: |
+          TAG="${{ github.event.inputs.tag }}"
+          echo "Checking if tag $TAG exists..."
+          
+          # 获取所有 tags
+          git fetch --tags
+          
+          # 检查 tag 是否存在
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG exists ✓"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Error: Tag '$TAG' does not exist!"
+            echo "Available tags:"
+            git tag -l | head -10
+            echo "exists=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+      
+      - name: Checkout tag
+        uses: actions/checkout@v3
+        with:
           ref: ${{ github.event.inputs.tag }}
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${{ github.event.inputs.tag }}"
+          VERSION=${TAG#v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION from tag: $TAG"
+      
+      - name: Update manifest versions
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # 更新 Chrome manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.chrome.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.chrome.json', JSON.stringify(manifest, null, 2));
+          "
+          # 更新 Firefox manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.firefox.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.firefox.json', JSON.stringify(manifest, null, 2));
+          "
+          echo "Updated manifests to version $VERSION"
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -104,6 +210,7 @@ jobs:
     name: Publish to Firefox Add-ons
     needs: [build-firefox]
     runs-on: ubuntu-latest
+    if: needs.build-firefox.result == 'success'
     steps:
       - uses: actions/checkout@v3
         with:

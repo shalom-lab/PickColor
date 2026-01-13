@@ -13,6 +13,32 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+      
+      - name: Update manifest versions
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # 更新 Chrome manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.chrome.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.chrome.json', JSON.stringify(manifest, null, 2));
+          "
+          # 更新 Firefox manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.firefox.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.firefox.json', JSON.stringify(manifest, null, 2));
+          "
+          echo "Updated manifests to version $VERSION"
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -42,6 +68,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+      
+      - name: Update manifest versions
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          # 更新 Chrome manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.chrome.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.chrome.json', JSON.stringify(manifest, null, 2));
+          "
+          # 更新 Firefox manifest
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.firefox.json', 'utf8'));
+            manifest.version = '$VERSION';
+            fs.writeFileSync('manifest.firefox.json', JSON.stringify(manifest, null, 2));
+          "
+          echo "Updated manifests to version $VERSION"
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
