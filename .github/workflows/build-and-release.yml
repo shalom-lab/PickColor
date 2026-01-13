@@ -1,0 +1,96 @@
+name: Build and Release
+
+# 当推送 tag 时自动触发
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-chrome:
+    name: Build Chrome Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Chrome extension
+        run: npm run build:chrome
+      
+      - name: Create Chrome ZIP
+        run: |
+          cd dist
+          zip -r ../pickcolor-chrome-${{ github.ref_name }}.zip .
+          cd ..
+      
+      - name: Upload Chrome artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pickcolor-chrome
+          path: pickcolor-chrome-${{ github.ref_name }}.zip
+
+  build-firefox:
+    name: Build Firefox Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Firefox extension
+        run: npm run build:firefox
+      
+      - name: Create Firefox ZIP
+        run: |
+          cd dist
+          zip -r ../pickcolor-firefox-${{ github.ref_name }}.zip .
+          cd ..
+      
+      - name: Upload Firefox artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pickcolor-firefox
+          path: pickcolor-firefox-${{ github.ref_name }}.zip
+
+  release:
+    name: Create GitHub Release
+    needs: [build-chrome, build-firefox]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download Chrome artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pickcolor-chrome
+      
+      - name: Download Firefox artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pickcolor-firefox
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            pickcolor-chrome-*.zip
+            pickcolor-firefox-*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

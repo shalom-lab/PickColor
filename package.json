@@ -1,0 +1,28 @@
+{
+    "name": "pickcolor",
+    "version": "1.0.0",
+    "description": "极简、高效、专业的色彩助手浏览器插件",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "build:chrome": "vite build --mode chrome",
+        "build:firefox": "vite build --mode firefox",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "lucide-react": "^0.263.1"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.251",
+        "@types/react": "^18.2.15",
+        "@types/react-dom": "^18.2.7",
+        "@vitejs/plugin-react": "^4.0.3",
+        "autoprefixer": "^10.4.14",
+        "postcss": "^8.4.24",
+        "tailwindcss": "^3.3.2",
+        "vite": "^4.4.5"
+    }
+}

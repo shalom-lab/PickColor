@@ -1,0 +1,103 @@
+// 多语言翻译文件
+// 添加新语言时，请确保所有 key 都包含完整的翻译
+
+export const translations = {
+  zh: {
+    appName: 'PickColor',
+    appDesc: '极简、高效、专业的色彩助手',
+    home: '工作台',
+    palettes: '色板',
+    settings: '配置',
+    screenPick: '屏幕吸取',
+    manualColor: '手动调色',
+    recentHistory: '最近记录',
+    clearHistory: '清空记录',
+    quickSave: '快速存入库',
+    addCurrentColor: '+ 当前色',
+    added: '已添加',
+    newPalette: '新建色板',
+    paletteName: '色板名称',
+    enterPaletteName: '请输入色板名称',
+    create: '创建',
+    cancel: '取消',
+    delete: '删除',
+    copy: '复制',
+    confirm: '确认',
+    confirmDelete: '确定要删除色板',
+    confirmDeleteQuestion: '吗？',
+    copied: '已成功复制',
+    clickToCopy: '点击复制',
+    clickToCopyHex: '点击复制 HEX',
+    clickToCopyRgb: '点击复制 RGB',
+    clickToCopyHsl: '点击复制 HSL',
+    clickToCopyPalette: '复制色板',
+    add: '添加',
+    placeholder: '马卡龙1:#FFB6C1,#FFC0CB,#FFDAB9\n夏日森林:065f46,059669,34d399\n极简办公:#f8fafc,#334155,#1e293b',
+    startRecording: '点击屏幕取色或调色开始记录',
+    language: '语言',
+    exportPalettes: '导出全部色板',
+    exportSuccess: '色板已导出',
+    exportFailed: '导出失败',
+    languageSettings: '语言设置',
+    dataManagement: '数据管理',
+    formatError: '格式错误！请使用格式：色板名称:颜色1,颜色2,颜色3',
+    formatExample: '每行一个色板，例如：\n马卡龙1:#FFB6C1,#FFC0CB,#FFDAB9\n夏日森林:065f46,059669,34d399',
+    formatErrorLine: '第 {line} 行格式错误',
+    addSuccess: '成功添加 {count} 个色板！',
+    addSuccessWithErrors: '成功添加 {count} 个色板！\n但有 {errorCount} 行格式错误：'
+  },
+  en: {
+    appName: 'PickColor',
+    appDesc: 'Minimalist, efficient, professional color assistant',
+    home: 'Workspace',
+    palettes: 'Palettes',
+    settings: 'Settings',
+    screenPick: 'Screen Pipette',
+    manualColor: 'Manual Color',
+    recentHistory: 'Recent History',
+    clearHistory: 'Clear History',
+    quickSave: 'Quick Save',
+    addCurrentColor: '+ Current Color',
+    added: 'Added',
+    newPalette: 'New Palette',
+    paletteName: 'Palette Name',
+    enterPaletteName: 'Please enter palette name',
+    create: 'Create',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    copy: 'Copy',
+    confirm: 'Confirm',
+    confirmDelete: 'Are you sure you want to delete palette',
+    confirmDeleteQuestion: '?',
+    copied: 'Successfully copied',
+    clickToCopy: 'Click to copy',
+    clickToCopyHex: 'Click to copy HEX',
+    clickToCopyRgb: 'Click to copy RGB',
+    clickToCopyHsl: 'Click to copy HSL',
+    clickToCopyPalette: 'Copy Palette',
+    add: 'Add',
+    placeholder: 'Macaron1:#FFB6C1,#FFC0CB,#FFDAB9\nSummer Forest:065f46,059669,34d399\nMinimal Office:#f8fafc,#334155,#1e293b',
+    startRecording: 'Click screen pipette or manual color to start recording',
+    language: 'Language',
+    exportPalettes: 'Export All Palettes',
+    exportSuccess: 'Palettes exported successfully',
+    exportFailed: 'Export failed',
+    languageSettings: 'Language Settings',
+    dataManagement: 'Data Management',
+    formatError: 'Format error! Please use format: Palette Name:color1,color2,color3',
+    formatExample: 'One palette per line, e.g.:\nMacaron1:#FFB6C1,#FFC0CB,#FFDAB9\nSummer Forest:065f46,059669,34d399',
+    formatErrorLine: 'Line {line} format error',
+    addSuccess: 'Successfully added {count} palettes!',
+    addSuccessWithErrors: 'Successfully added {count} palettes!\nBut {errorCount} lines have format errors:'
+  }
+};
+
+// 支持的语言列表（用于语言选择器）
+export const supportedLanguages = [
+  { code: 'zh', name: '中文' },
+  { code: 'en', name: 'English' }
+];
+
+// 默认语言
+export const defaultLanguage = 'zh';
+

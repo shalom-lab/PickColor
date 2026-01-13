@@ -1,0 +1,127 @@
+name: Publish to Stores
+
+# 手动触发，可以选择要发布的 tag
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-chrome:
+    name: Build Chrome Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Chrome extension
+        run: npm run build:chrome
+      
+      - name: Create Chrome ZIP
+        run: |
+          cd dist
+          zip -r ../pickcolor-chrome-${{ github.event.inputs.tag }}.zip .
+          cd ..
+      
+      - name: Upload Chrome artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pickcolor-chrome
+          path: pickcolor-chrome-${{ github.event.inputs.tag }}.zip
+
+  build-firefox:
+    name: Build Firefox Extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Firefox extension
+        run: npm run build:firefox
+      
+      - name: Create Firefox ZIP
+        run: |
+          cd dist
+          zip -r ../pickcolor-firefox-${{ github.event.inputs.tag }}.zip .
+          cd ..
+      
+      - name: Upload Firefox artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pickcolor-firefox
+          path: pickcolor-firefox-${{ github.event.inputs.tag }}.zip
+
+  publish-chrome:
+    name: Publish to Chrome Web Store
+    needs: [build-chrome]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      
+      - name: Download Chrome artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pickcolor-chrome
+          path: .
+      
+      - name: Publish to Chrome Web Store
+        if: ${{ secrets.CHROME_CLIENT_ID != '' }}
+        uses: mnao305/chrome-extension-upload@v1.0.0
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          file-path: pickcolor-chrome-${{ github.event.inputs.tag }}.zip
+          publish: true
+
+  publish-firefox:
+    name: Publish to Firefox Add-ons
+    needs: [build-firefox]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      
+      - name: Download Firefox artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pickcolor-firefox
+          path: .
+      
+      - name: Publish to Firefox Add-ons
+        if: ${{ secrets.FIREFOX_API_KEY != '' }}
+        uses: mreichelt/firefox-addon-upload@v1.0.0
+        with:
+          firefox-api-key: ${{ secrets.FIREFOX_API_KEY }}
+          firefox-api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+          firefox-extension-id: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          file-path: pickcolor-firefox-${{ github.event.inputs.tag }}.zip
+          channel: listed
+
