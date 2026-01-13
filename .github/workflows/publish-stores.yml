@@ -90,7 +90,7 @@ jobs:
           cd ..
       
       - name: Upload Chrome artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pickcolor-chrome
           path: pickcolor-chrome-${{ github.event.inputs.tag }}.zip
@@ -175,7 +175,7 @@ jobs:
           cd ..
       
       - name: Upload Firefox artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pickcolor-firefox
           path: pickcolor-firefox-${{ github.event.inputs.tag }}.zip
@@ -190,7 +190,7 @@ jobs:
           ref: ${{ github.event.inputs.tag }}
       
       - name: Download Chrome artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pickcolor-chrome
           path: .
@@ -217,7 +217,7 @@ jobs:
           ref: ${{ github.event.inputs.tag }}
       
       - name: Download Firefox artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pickcolor-firefox
           path: .
