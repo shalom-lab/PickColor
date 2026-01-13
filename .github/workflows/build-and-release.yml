@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write  # 需要此权限来创建 release
+
 jobs:
   build-chrome:
     name: Build Chrome Extension
@@ -123,6 +126,8 @@ jobs:
     name: Create GitHub Release
     needs: [build-chrome, build-firefox]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 需要此权限来创建 release
     steps:
       - uses: actions/checkout@v3
       
@@ -144,5 +149,6 @@ jobs:
             pickcolor-firefox-*.zip
           draft: false
           prerelease: false
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
